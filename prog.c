@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     // }
 
     //declaramos los Hilos del proceso 1
-    pthread_t receiver1;
+
 
     //creamos la cola sobre la cual se va escribir el mensaje enviado por el proceso 1
 
@@ -51,6 +51,9 @@ int main(int argc, char *argv[])
             break;
         }
     }
+     mq_close(mq1);
+    mq_unlink("/mq0");
+    exit(EXIT_SUCCESS);
 
     
 
