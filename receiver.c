@@ -21,16 +21,15 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
     mq1 = mq_open("/mq1", O_WRONLY | O_CREAT, 0644, &attr1);
     char str[64];
     char direccion[60];
-    // Arreglo de cadenas: aquí almacenamos todas las palabras
+ 
     char palabras[CANTIDAD_LINEAS][MAXIMA_LONGITUD_CADENA];
-    // Útil para leer el archivo
+
     char buferArchivo[MAXIMA_LONGITUD_CADENA];
 
     while (1)
     {
         fgets(str, sizeof(str), stdin);
-        if (str[strlen(str) - 1] == '\n')
-            str[strlen(str) - 1] = 0;
+        if (str[strlen(str) - 1] == '\n') str[strlen(str) - 1] = 0;
         mq_send(mq1, str, strlen(str) + 1, 0);
         if (strncmp(str, "exit", strlen("exit")) == 0)
         {
@@ -44,7 +43,7 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
                 if (fgets(direccion, 60, stdin) != NULL)
                 {
                     direccion[strlen(direccion) - 1] = 0;
-                    printf("%s la direccion del correo es \n", direccion);
+                
                 }
                 FILE *archivo = fopen(direccion, "r");
                 if (archivo == NULL)
@@ -53,17 +52,17 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
                 }
                 else
                 {
-                    // Necesitamos este ayudante para saber en qué línea vamos
+
                     int indice = 0;
-                    // Mientras podamos leer una línea del archivo
+
                     while (fgets(buferArchivo, MAXIMA_LONGITUD_CADENA, archivo))
                     {
-                        // Remover salto de línea
+
                         strtok(buferArchivo, "\n");
 
                         memcpy(palabras[indice], buferArchivo, MAXIMA_LONGITUD_CADENA);
 
-                        // Aumentarlo en cada iteración
+
                         indice++;
                     }
                     fclose(archivo);
@@ -134,11 +133,19 @@ int main(int argc, char *argv[]) // se encarga de resivir todos los mensajes y a
     while (1)
     {
         mq_receive(mq, buff, 64, NULL);
-        printf("Mensaje del otro Usuario: %s\n", buff);
+        if (strncmp(buff, "Mandar", strlen("Mandar")) == 0) 
+        {
+          
+        }
+        else{
+             printf("Mensaje del otro Usuario: %s\n", buff);
+        
+        }
         if (strncmp(buff, "exit", strlen("exit")) == 0)
         {
             break;
         }
+        
     }
 
     mq_close(mq);
