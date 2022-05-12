@@ -4,8 +4,8 @@
 #include <string.h>
 #include <mqueue.h>
 #include <pthread.h>
-#define MAXIMA_LONGITUD_CADENA 1000
-#define CANTIDAD_LINEAS 10
+#define reglonTotal 1000
+#define LineasTotales 100
 #define NOMBRE_ARCHIVO "texto.txt"
 void* Llegada(void *arg)//usando la segunda cola , el  sender resivira el mensaje del receiver , utilizando el segundo hilo 
 {
@@ -41,8 +41,8 @@ int main(int argc, char* argv[])//el primer hilo se encarga de  enviar el mensaj
     mqd_t mq = mq_open("/mq0", O_WRONLY);
     char str[64];
     char direccion[60];
-    char palabras[CANTIDAD_LINEAS][MAXIMA_LONGITUD_CADENA];
-    char buferArchivo[MAXIMA_LONGITUD_CADENA];
+    char palabras[LineasTotales][reglonTotal];
+    char buferArchivo[reglonTotal];
 
     pthread_t threadID1;
     pthread_create(&threadID1,NULL,&Llegada,NULL);
@@ -74,17 +74,17 @@ int main(int argc, char* argv[])//el primer hilo se encarga de  enviar el mensaj
                 else
                 {
 
-                    int indice = 0;
+                    int contador = 0;
 
-                    while (fgets(buferArchivo, MAXIMA_LONGITUD_CADENA, archivo))
+                    while (fgets(buferArchivo, reglonTotal, archivo))
                     {
 
                         strtok(buferArchivo, "\n");
 
-                        memcpy(palabras[indice], buferArchivo, MAXIMA_LONGITUD_CADENA);
+                        memcpy(palabras[contador], buferArchivo, reglonTotal);
 
 
-                        indice++;
+                        contador++;
                     }
                     fclose(archivo);
                     printf("archivo montado , como quieres el orden ,normal o invertido ?\n");
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])//el primer hilo se encarga de  enviar el mensaj
                         {
                              printf("se enviara de forma normal");
                             fgets(str, sizeof(str), stdin);
-                            for (int i = 0; i < CANTIDAD_LINEAS; i++)
+                            for (int i = 0; i < contador-1; i++)
                             {
                                 mq_send(mq, palabras[i], 64, 0);
                             }
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])//el primer hilo se encarga de  enviar el mensaj
                         {
                             printf("se invertido");
                             fgets(str, sizeof(str), stdin);
-                            for (int i = CANTIDAD_LINEAS-1; i >=0; i--)
+                            for (int i = contador-1; i >=0; i--)
                             {
                                 mq_send(mq, palabras[i], 64, 0);
                             }
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])//el primer hilo se encarga de  enviar el mensaj
                         {
                              printf("se enviara de forma normal predeterminada mente");
                             fgets(str, sizeof(str), stdin);
-                            for (int i = 0; i < CANTIDAD_LINEAS; i++)
+                            for (int i = 0; i < contador-1; i++)
                             {
                                 mq_send(mq, palabras[i], 64, 0);
                             }

@@ -5,7 +5,7 @@
 #include <mqueue.h>
 #include <pthread.h>
 #define MAXIMA_LONGITUD_CADENA 1000
-#define CANTIDAD_LINEAS 10
+#define LineasTotales 100
 #define NOMBRE_ARCHIVO "texto.txt"
 
 void *salida(void *arg) // hilo que se encarga de crear la cola para que el pueda enviar los mensajes
@@ -22,7 +22,7 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
     char str[64];
     char direccion[60];
  
-    char palabras[CANTIDAD_LINEAS][MAXIMA_LONGITUD_CADENA];
+    char palabras[LineasTotales][MAXIMA_LONGITUD_CADENA];
 
     char buferArchivo[MAXIMA_LONGITUD_CADENA];
 
@@ -53,17 +53,17 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
                 else
                 {
 
-                    int indice = 0;
+                    int contador = 0;
 
                     while (fgets(buferArchivo, MAXIMA_LONGITUD_CADENA, archivo))
                     {
 
                         strtok(buferArchivo, "\n");
 
-                        memcpy(palabras[indice], buferArchivo, MAXIMA_LONGITUD_CADENA);
+                        memcpy(palabras[contador], buferArchivo, MAXIMA_LONGITUD_CADENA);
 
 
-                        indice++;
+                        contador++;
                     }
                     fclose(archivo);
                     printf("archivo montado , como quieres el orden ,normal o invertido ?\n");
@@ -75,7 +75,7 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
                         {
                              printf("se enviara de forma normal");
                             fgets(str, sizeof(str), stdin);
-                            for (int i = 0; i < CANTIDAD_LINEAS; i++)
+                            for (int i = 0; i < contador-1; i++)
                             {
                                 mq_send(mq1, palabras[i], 64, 0);
                             }
@@ -84,7 +84,7 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
                         {
                             printf("se invertido");
                             fgets(str, sizeof(str), stdin);
-                            for (int i = CANTIDAD_LINEAS-1; i >=0; i--)
+                            for (int i = contador-1; i >=0; i--)
                             {
                                 mq_send(mq1, palabras[i], 64, 0);
                             }
@@ -92,7 +92,7 @@ void *salida(void *arg) // hilo que se encarga de crear la cola para que el pued
                         {
                              printf("se enviara de forma normal predeterminada mente");
                             fgets(str, sizeof(str), stdin);
-                            for (int i = 0; i < CANTIDAD_LINEAS; i++)
+                            for (int i = 0; i < contador-1; i++)
                             {
                                 mq_send(mq1, palabras[i], 64, 0);
                             }
