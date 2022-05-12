@@ -14,10 +14,18 @@ void* Llegada(void *arg)//usando la segunda cola , el  sender resivira el mensaj
     while (1)
     {
         mq_receive(mq1, buff, 64, NULL);
-        printf("Mensaje del otro Usuario: %s\n", buff);
+        if (strncmp(buff, "Mandar", strlen("Mandar")) == 0) 
+        {
+          
+        }
+        else{
+             printf("Mensaje del otro Usuario: %s\n", buff);
+        
+        }
         if (strncmp(buff, "exit", strlen("exit")) == 0) {
             break;
         }
+
     }
 
     mq_close(mq1);
